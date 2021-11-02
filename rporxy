@@ -1,0 +1,408 @@
+""" create rporxy"""
+		if self.proxy_enabled:
+			try:
+				self.proxy = urllib2.ProxyHandler(self.proxy)
+				self.opener = urllib2.build_opener(self.proxy)
+				urllib2.install_opener(self.opener)
+			except:
+				print "Proxy not initialized"
+
+	def set_proxy(self, proxy_enabled, proxy):
+		""" set proxy settings"""
+		self.proxy_enabled = proxy_enabled
+		if self.proxy_enabled:
+			try:
+				self.proxy = urllib2.ProxyHandler(proxy)
+				self.opener = urllib2.build_opener(self.proxy)
+				urllib2.install_opener(self.opener)
+			except:
+				print "Proxy not initialized"
+
+	def get_html(self, url):
+		""" fetch html"""
+		try:
+			request = urllib2.Request(url)
+			request.add_header('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36')
+			html = urllib2.urlopen(request).read()
+			return html
+		except:
+			return None
+
+	def get_soup(self, url):
+		""" fetch html and create soup"""
+		html = self.get_html(url)
+		soup = BeautifulSoup(html)
+		return soup
+
+	def get_json(self, url):
+		""" fetch html and create soup"""
+		html = self.get_html(url)
+		json_data = json.loads(html)
+		return json_data
+
+	def get_query_url(self, query):
+		""" Build query URL"""
+		return self.base_url + query
+
+	def do_search(self, query):
+		""" implement search"""
+		url = self.get_query_url(query)
+		soup = self.get_soup(url)
+		return soup
+
+	def do_search_url(self, query):
+		""" implement search"""
+		url = self.get_query_url(query)
+		return url
+
+	def parse_search_result(self, soup):
+		""" implement parse"""
+		return soup
+
+	def search(self, query, max_results=None, sort=False):
+		""" implement search"""
+		soup = self.do_search(query)
+		results = self.parse_search_result(soup)
+		return results
+
+	def download_torrent(self, info):
+		""" Download file"""
+		url = info['url']
+		file_name = info['title']
+		file_name = helper.file_name_filter(file_name)
+		file_name = helper.replace_illegal_name(file_name)
+		if not file_name:
+			file_name = 'noname'
+		file_path = helper.join_path(self.download_path, file_name + '.torrent')
+		if not self.debug:
+			try:
+				urllib.urlretrieve(url, file_path)
+			except:
+				print 'Error when downloading, skipping: ' + url
+				return
+		else:
+			print 'Would download: ' + file_name
+		info['file_path'] = file_path
+		return info
+
+	def search_and_download(self, query, max_results=None, sort=False):
+		""" search and download"""
+		results = self.search(query, max_results, sort)
+		for result in results:
+			info = self.download_torrent(result)
+			yield info
+
+	def search_and_return(self, query, max_results=None, sort=False):
+		""" search and return"""
+		results = self.search(query, max_results, sort)
+		return results
+
+	def get_download_path(self):
+		""" get download path"""
+		return self.download_path
+
+	def get_name(self):
+		""" get name"""
+		return self.name
+
+	def get_proxy_enabled(self):
+		""" get proxy enabled"""
+		return self.proxy_enabled
+
+	def get_proxy(self):
+		""" get proxy"""
+		return self.proxy
+
+	def get_site_url(self):
+		""" get site url"""
+		return self.base_url
+
+	def get_full_url(self, url):
+		""" get full url"""
+		return self.base_url + url
+
+	def get_login_url(self):
+		""" get login url"""
+		return self.login_url
+
+	def get_login_data(self):
+		""" get login data"""
+		return self.login_data
+
+	def get_search_url(self):
+		""" get search url"""
+		return self.search_url
+
+	def get_login_cookie(self):
+		""" get login cookie"""
+		return self.login_cookie
+
+	def set_login_cookie(self, cookie):
+		""" set login cookie"""
+		self.login_cookie = cookie
+
+	def set_login_data(self, data):
+		""" set login data"""
+		self.login_data = data
+
+	def set_login_url(self, url):
+		""" set login url"""
+		self.login_url = url
+
+	def set_search_url(self, url):
+		""" set search url"""
+		self.search_url = url
+
+	def set_download_path(self, path):
+		""" set download path"""
+		self.download_path = path
+
+	def set_name(self, name):
+		""" set name"""
+		self.name = name
+
+	def set_proxy_enabled(self, enabled):
+		""" set proxy enabled"""
+		self.proxy_enabled = enabled
+
+	def set_proxy(self, proxy):
+		""" set proxy"""
+		self.proxy = proxy
+
+	def set_site_url(self, url):
+		""" set site url"""
+		self.base_url = url
+
+	def set_full_url(self, url):
+		""" set full url"""
+		self.full_url = url
+
+
+class TorrentSite(object):
+	""" Torrent Site"""
+	def __init__(self, name, download_path, debug=False):
+		self.name = name
+		self.download_path = download_path
+		self.debug = debug
+
+		self.base_url = ''
+		self.login_url = ''
+		self.search_url = ''
+		self.login_data = {}
+		self.login_cookie = ''
+		self.proxy_enabled = False
+		self.proxy = {}
+
+		self.proxy = {}
+		self.create_proxy()
+
+		self.login()
+
+	def create_proxy(self):
+		""" create rporxy"""
+		if self.proxy_enabled:
+			try:
+				self.proxy = urllib2.ProxyHandler(self.proxy)
+				self.opener = urllib2.build_opener(self.proxy)
+				urllib2.install_opener(self.opener)
+			except:
+				print "Proxy not initialized"
+
+	def set_proxy(self, proxy_enabled, proxy):
+		""" set proxy settings"""
+		self.proxy_enabled = proxy_enabled
+		if self.proxy_enabled:
+			try:
+				self.proxy = urllib2.ProxyHandler(proxy)
+				self.opener = urllib2.build_opener(self.proxy)
+				urllib2.install_opener(self.opener)
+			except:
+				print "Proxy not initialized"
+
+	def get_html(self, url):
+		""" fetch html"""
+		try:
+			request = urllib2.Request(url)
+			request.add_header('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36')
+			html = urllib2.urlopen(request).read()
+			return html
+		except:
+			return None
+
+	def get_soup(self, url):
+		""" fetch html and create soup"""
+		html = self.get_html(url)
+		soup = BeautifulSoup(html)
+		return soup
+
+	def get_json(self, url):
+		""" fetch html and create soup"""
+		html = self.get_html(url)
+		json_data = json.loads(html)
+		return json_data
+
+	def get_query_url(self, query):
+		""" Build query URL"""
+		return self.base_url + query
+
+	def do_search(self, query):
+		""" implement search"""
+		url = self.get_query_url(query)
+		soup = self.get_soup(url)
+		return soup
+
+	def do_search_url(self, query):
+		""" implement search"""
+		url = self.get_query_url(query)
+		return url
+
+	def parse_search_result(self, soup):
+		""" implement parse"""
+		return soup
+
+	def search(self, query, max_results=None, sort=False):
+		""" implement search"""
+		soup = self.do_search(query)
+		results = self.parse_search_result(soup)
+		return results
+
+	def download_torrent(self, info):
+		""" Download file"""
+		url = info['url']
+		file_name = info['title']
+		file_name = helper.file_name_filter(file_name)
+		file_name = helper.replace_illegal_name(file_name)
+		if not file_name:
+			file_name = 'noname'
+		file_path = helper.join_path(self.download_path, file_name + '.torrent')
+		if not self.debug:
+			try:
+				urllib.urlretrieve(url, file_path)
+			except:
+				print 'Error when downloading, skipping: ' + url
+				return
+		else:
+			print 'Would download: ' + file_name
+		info['file_path'] = file_path
+		return info
+
+	def search_and_download(self, query, max_results=None, sort=False):
+		""" search and download"""
+		results = self.search(query, max_results, sort)
+		for result in results:
+			info = self.download_torrent(result)
+			yield info
+
+	def search_and_return(self, query, max_results=None, sort=False):
+		""" search and return"""
+		results = self.search(query, max_results, sort)
+		return results
+
+	def get_download_path(self):
+		""" get download path"""
+		return self.download_path
+
+	def get_name(self):
+		""" get name"""
+		return self.name
+
+	def get_proxy_enabled(self):
+		""" get proxy enabled"""
+		return self.proxy_enabled
+
+	def get_proxy(self):
+		""" get proxy"""
+		return self.proxy
+
+	def get_site_url(self):
+		""" get site url"""
+		return self.base_url
+
+	def get_full_url(self, url):
+		""" get full url"""
+		return self.base_url + url
+
+	def get_login_url(self):
+		""" get login url"""
+		return self.login_url
+
+	def get_login_data(self):
+		""" get login data"""
+		return self.login_data
+
+	def get_search_url(self):
+		""" get search url"""
+		return self.search_url
+
+	def get_login_cookie(self):
+		""" get login cookie"""
+		return self.login_cookie
+
+	def set_login_cookie(self, cookie):
+		""" set login cookie"""
+		self.login_cookie = cookie
+
+	def set_login_data(self, data):
+		""" set login data"""
+		self.login_data = data
+
+	def set_login_url(self, url):
+		""" set login url"""
+		self.login_url = url
+
+	def set_search_url(self, url):
+		""" set search url"""
+		self.search_url = url
+
+	def set_download_path(self, path):
+		""" set download path"""
+		self.download_path = path
+
+	def set_name(self, name):
+		""" set name"""
+		self.name = name
+
+	def set_proxy_enabled(self, enabled):
+		""" set proxy enabled"""
+		self.proxy_enabled = enabled
+
+	def set_proxy(self, proxy):
+		""" set proxy"""
+		self.proxy = proxy
+
+	def set_site_url(self, url):
+		""" set site url"""
+		self.base_url = url
+
+	def set_full_url(self, url):
+		""" set full url"""
+		self.full_url = url
+
+
+class TorrentSiteManager(object):
+	""" Torrent Site Manager"""
+	def __init__(self, download_path, debug=False):
+		self.debug = debug
+		self.download_path = download_path
+		self.torrent_sites = {}
+
+	def add_torrent_site(self, torrent_site):
+		""" add torrent site"""
+		self.torrent_sites[torrent_site.get_name()] = torrent_site
+
+	def get_torrent_sites(self):
+		""" get torrent sites"""
+		return self.torrent_sites
+
+	def get_torrent_site(self, name):
+		""" get torrent site"""
+		return self.torrent_sites[name]
+
+	def search_and_download(self, query, max_results=None, sort=False):
+		""" search and download"""
+		for torrent_site in self.torrent_sites.values():
+			results = torrent_site.search_and_download(query, max_results, sort)
+			for result in results:
+				yield result
+
+	def search_and_return(self, query, max_results=None, sort=False):
