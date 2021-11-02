@@ -1,0 +1,246 @@
+"""
+import tensorflow-gpu
+create a module and training for face exprssion and test it
+create the necessary file and directorys
+create the necessary path and save it
+print results accuracy
+"""
+
+
+import tensorflow as tf
+import tensorflow.keras as k
+import numpy as np
+import cv2
+import os
+
+class Data:
+    def __init__(self,data_path='Data',batch_size=16):
+        self.data_path=data_path
+        self.batch_size=batch_size
+        self.train_data=[]
+        self.train_label=[]
+        self.test_data=[]
+        self.test_label=[]
+        self.test_label_one_hot=[]
+    def load_data(self):
+        print('Loading Data...')
+        for i in range(7):
+            for img in os.listdir(self.data_path+'/'+str(i)):
+                img_path=self.data_path+'/'+str(i)+'/'+img
+                self.train_data.append(cv2.imread(img_path))
+                self.train_label.append(i)
+        self.train_data=np.array(self.train_data)
+        self.train_label=np.array(self.train_label)
+        print('Data Loaded Successfully')
+        return self.train_data,self.train_label
+    def split_data(self):
+        print('Splitting Data...')
+        self.train_data,self.test_data,self.train_label,self.test_label=k.model_selection.train_test_split(self.train_data,self.train_label)
+        print('Data Splitted Successfully')
+        return self.train_data,self.test_data,self.train_label,self.test_label
+    def one_hot_label(self):
+        print('Creating one hot label...')
+        self.test_label_one_hot=k.utils.to_categorical(self.test_label)
+        print('One hot label created Successfully')
+        return self.test_label_one_hot
+    def get_test_label(self):
+        return self.test_label_one_hot
+    def get_train_data(self):
+        return self.train_data
+    def get_test_data(self):
+        return self.test_data
+    def get_train_label(self):
+        return self.train_label
+    def get_test_label(self):
+        return self.test_label
+    def create_path(self):
+        print('Creating Path...')
+        if not os.path.exists('model'):
+            os.mkdir('model')
+        if not os.path.exists('model/model_exp2.h5'):
+            os.mkdir('model/model_exp2.h5')
+        if not os.path.exists('model/log'):
+            os.mkdir('model/log')
+        if not os.path.exists('model/log/model_exp2'):
+            os.mkdir('model/log/model_exp2')
+        print('Path created Successfully')
+    def save_model(self,model):
+        print('Saving Model...')
+        model.save('model/model_exp2.h5')
+        print('Model saved Successfully')
+    def load_model(self):
+        print('Loading Model...')
+        model=k.models.load_model('model/model_exp2.h5')
+        print('Model loaded Successfully')
+        return model
+    def print_acc(self,model):
+        print('Printing Accuracy...')
+        loss,acc=model.evaluate(self.test_data,self.test_label_one_hot)
+        print('Accuracy is :',acc)
+        print('Accuracy Printed Successfully')
+        return acc
+    def get_path(self):
+        return 'model/log/model_exp2'
+    def get_batch_size(self):
+        return self.batch_size
+class Model:
+    def __init__(self,data,epochs=20,batch_size=16,learning_rate=0.001):
+        self.data=data
+        self.epochs=epochs
+        self.batch_size=batch_size
+        self.learning_rate=learning_rate
+        self.model=None
+    def create_model(self):
+        print('Creating Model...')
+        self.model=k.Sequential([
+            k.layers.Conv2D(32,(3,3),input_shape=(48,48,3),activation='relu'),
+            k.layers.MaxPooling2D((3,3)),
+            k.layers.Conv2D(64,(3,3),activation='relu'),
+            k.layers.MaxPooling2D((3,3)),
+            k.layers.Conv2D(128,(3,3),activation='relu'),
+            k.layers.MaxPooling2D((3,3)),
+            k.layers.Flatten(),
+            k.layers.Dense(1024,activation='relu'),
+            k.layers.Dense(512,activation='relu'),
+            k.layers.Dense(256,activation='relu'),
+            k.layers.Dense(128,activation='relu'),
+            k.layers.Dense(64,activation='relu'),
+            k.layers.Dense(7,activation='softmax')
+        ])
+        print('Model Created Successfully')
+        return self.model
+    def compile_model(self):
+        print('Compiling Model...')
+        self.model.compile(optimizer=k.optimizers.Adam(lr=self.learning_rate),loss='categorical_crossentropy',metrics=['accuracy'])
+        print('Model Compiled Successfully')
+        return self.model
+    def train_model(self):
+        print('Training Model...')
+        self.model.fit(self.data.get_train_data(),self.data.get_train_label(),epochs=self.epochs,batch_size=self.batch_size,validation_data=(self.data.get_test_data(),self.data.get_test_label()))
+        print('Model Trained Successfully')
+        return self.model
+    def print_model(self):
+        print('Printing Model...')
+        self.model.summary()
+        print('Model Printed Successfully')
+    def get_model(self):
+        return self.model
+    def save_model(self):
+        print('Saving Model...')
+        self.data.save_model(self.model)
+        print('Model Saved Successfully')
+    def load_model(self):
+        print('Loading Model...')
+        self.model=self.data.load_model()
+        print('Model Loaded Successfully')
+        return self.model
+    def print_acc(self):
+        print('Printing Accuracy...')
+        acc=self.data.print_acc(self.model)
+        print('Accuracy Printed Successfully')
+        return acc
+    def get_path(self):
+        return self.data.get_path()
+    def get_batch_size(self):
+        return self.data.get_batch_size()
+class Train:
+    def __init__(self,model,data,epochs=20,batch_size=16,learning_rate=0.001,save_acc=True):
+        self.model=model
+        self.data=data
+        self.epochs=epochs
+        self.batch_size=batch_size
+        self.learning_rate=learning_rate
+        self.save_acc=save_acc
+        self.acc=[]
+    def train(self):
+        print('Training...')
+        self.model.compile_model()
+        self.model.train_model()
+        if self.save_acc:
+            print('Saving Accuracy...')
+            self.acc.append(self.model.print_acc())
+            print('Accuracy Saved Successfully')
+        print('Training Done Successfully')
+    def get_acc(self):
+        return self.acc
+    def save_acc(self):
+        print('Saving Accuracy...')
+        f=open('model/log/model_exp2/acc.txt','w')
+        for i in self.acc:
+            f.write(str(i)+'\n')
+        f.close()
+        print('Accuracy Saved Successfully')
+    def save_train(self):
+        print('Saving Train...')
+        self.model.save_model()
+        print('Train Saved Successfully')
+    def load_train(self):
+        print('Loading Train...')
+        self.model.load_model()
+        print('Train Loaded Successfully')
+    def get_model(self):
+        return self.model
+    def get_data(self):
+        return self.data
+    def get_epochs(self):
+        return self.epochs
+    def get_batch_size(self):
+        return self.batch_size
+    def get_learning_rate(self):
+        return self.learning_rate
+    def get_save_acc(self):
+        return self.save_acc
+    def get_path(self):
+        return self.model.get_path()
+    def get_batch_size(self):
+        return self.model.get_batch_size()
+class Test:
+    def __init__(self,model,data):
+        self.model=model
+        self.data=data
+        self.test_label_one_hot=self.data.one_hot_label()
+    def test(self):
+        print('Testing...')
+        loss,acc=self.model.evaluate(self.data.get_test_data(),self.test_label_one_hot)
+        print('Accuracy is :',acc)
+        print('Testing Done Successfully')
+        return acc
+class Main:
+    def __init__(self,train,test,epochs=20,batch_size=16,learning_rate=0.001,save_acc=True):
+        self.train=train
+        self.test=test
+        self.epochs=epochs
+        self.batch_size=batch_size
+        self.learning_rate=learning_rate
+        self.save_acc=save_acc
+    def main(self):
+        print('Main...')
+        self.train.train()
+        self.test.test()
+        if self.save_acc:
+            self.train.save_acc()
+        self.train.save_train()
+        print('Main Done Successfully')
+class Program:
+    def __init__(self,data_path='Data',epochs=20,batch_size=16,learning_rate=0.001,save_acc=True):
+        self.data_path=data_path
+        self.epochs=epochs
+        self.batch_size=batch_size
+        self.learning_rate=learning_rate
+        self.save_acc=save_acc
+    def run(self):
+        print('Running...')
+        data=Data(self.data_path,self.batch_size)
+        data.create_path()
+        data.load_data()
+        data.split_data()
+        data.one_hot_label()
+        model=Model(data,self.epochs,self.batch_size,self.learning_rate)
+        model.create_model()
+        train=Train(model,data,self.epochs,self.batch_size,self.learning_rate,self.save_acc)
+        test=Test(model,data)
+        main=Main(train,test,self.epochs,self.batch_size,self.learning_rate,self.save_acc)
+        main.main()
+        print('Program Done Successfully')
+p: Program=Program()
+p.run()
