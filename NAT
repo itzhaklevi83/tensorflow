@@ -1,0 +1,292 @@
+creat comment nat rules """
+def create_comment_nat_rules(**kwargs):
+    """create comment nat rules"""
+    nat_rules_obj = nat_rules()
+    nat_rules_obj.set_comment(kwargs['comment'])
+    nat_rules_obj.set_count(kwargs['count'])
+    nat_rules_obj.set_nat_type(kwargs['nat_type'])
+    nat_rules_obj.set_source_intf(kwargs['source_intf'])
+    nat_rules_obj.set_destination_intf(kwargs['destination_intf'])
+    nat_rules_obj.set_source_ip(kwargs['source_ip'])
+    nat_rules_obj.set_destination_ip(kwargs['destination_ip'])
+    nat_rules_obj.set_service(kwargs['service'])
+    nat_rules_obj.set_destination_port(kwargs['destination_port'])
+    nat_rules_obj.set_source_port(kwargs['source_port'])
+    nat_rules_obj.set_protocol(kwargs['protocol'])
+    nat_rules_obj.set_destination_translated_ip(kwargs['destination_translated_ip'])
+    nat_rules_obj.set_destination_translated_port(kwargs['destination_translated_port'])
+    nat_rules_obj.set_source_interface(kwargs['source_interface'])
+    nat_rules_obj.set_destination_interface(kwargs['destination_interface'])
+    nat_rules_obj.set_policy(kwargs['policy'])
+    nat_rules_obj.set_source_zone(kwargs['source_zone'])
+    nat_rules_obj.set_destination_zone(kwargs['destination_zone'])
+    nat_rules_obj.set_source_translation_fallback_type(kwargs['source_translation_fallback_type'])
+    nat_rules_obj.set_source_translation_fallback_address_type(kwargs['source_translation_fallback_address_type'])
+    nat_rules_obj.set_source_translation_fallback_address(kwargs['source_translation_fallback_address'])
+    nat_rules_obj.set_source_translation_fallback_port(kwargs['source_translation_fallback_port'])
+    nat_rules_obj.set_source_translation_type(kwargs['source_translation_type'])
+    nat_rules_obj.set_source_translation_static_translated_address(kwargs['source_translation_static_translated_address'])
+    nat_rules_obj.set_source_translation_static_bi_directional(kwargs['source_translation_static_bi_directional'])
+    nat_rules_obj.set_destination_translation_type(kwargs['destination_translation_type'])
+    nat_rules_obj.set_destination_translation_static_translated_address(kwargs['destination_translation_static_translated_address'])
+    nat_rules_obj.set_destination_translation_static_bi_directional(kwargs['destination_translation_static_bi_directional'])
+    nat_rules_obj.set_hide_source_address(kwargs['hide_source_address'])
+    nat_rules_obj.set_hide_destination_address(kwargs['hide_destination_address'])
+    nat_rules_obj.set_hide_source_port(kwargs['hide_source_port'])
+    nat_rules_obj.set_hide_destination_port(kwargs['hide_destination_port'])
+    nat_rules_obj.set_reflexive(kwargs['reflexive'])
+    nat_rules_obj.set_translated_port_behavior(kwargs['translated_port_behavior'])
+    nat_rules_obj.set_dynamic_ip_and_port(kwargs['dynamic_ip_and_port'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_type(kwargs['dynamic_ip_and_port_settings_type'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_address_type(kwargs['dynamic_ip_and_port_settings_address_type'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_address(kwargs['dynamic_ip_and_port_settings_address'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_port(kwargs['dynamic_ip_and_port_settings_port'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_prefix_length(kwargs['dynamic_ip_and_port_settings_prefix_length'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_using_gateway_address(kwargs['dynamic_ip_and_port_settings_using_gateway_address'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_port_to_port_setting(kwargs['dynamic_ip_and_port_settings_port_to_port_setting'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_service(kwargs['dynamic_ip_and_port_settings_service'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_translation_type(kwargs['dynamic_ip_and_port_settings_translation_type'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_fallback_type(kwargs['dynamic_ip_and_port_settings_fallback_type'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_fallback_translated_address_type(kwargs['dynamic_ip_and_port_settings_fallback_translated_address_type'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_fallback_translated_addresses(kwargs['dynamic_ip_and_port_settings_fallback_translated_addresses'])
+    nat_rules_obj.set_dynamic_ip_and_port_settings_fallback_translated_ports(kwargs['dynamic_ip_and_port_settings_fallback_translated_ports'])
+    nat_rules_obj.set_destination_alias(kwargs['destination_alias'])
+    nat_rules_obj.set_source_alias(kwargs['source_alias'])
+    return _create_nat_rules(nitro, nat_rules_obj)
+
+
+"""
+router configuration related resources.
+"""
+
+def set_router_kernel_parameters(
+          nitro,
+          ipaddress,
+          netmask,
+          cidr):
+    """
+
+    :param nitro: NSNitro instance
+    :param ipaddress:Kernel ipaddr
+    :param netmask:Kernel netmask
+    :param cidr:Kernel cidr
+    :return:
+    NSResponse object
+    """
+    router_args = RouterArg()
+    router_args.set_ipaddress(ipaddress)
+    router_args.set_netmask(netmask)
+    router_args.set_cidr(cidr)
+    return Router.set_args(nitro, router_args)
+
+def add(
+          ps,
+          ipaddress,
+          netmask,
+          cidr):
+    """
+
+    :param ps: NSIP
+    :param ipaddress:IPaddr
+    :param netmask:Netmask
+    :param cidr:CIDR
+    :return:
+    """
+    return set_router_kernel_parameters(ps, ipaddress, netmask, cidr)
+
+
+def add_attribute_tcp_in(
+        ps,
+        rs,
+        mss,
+        sack,
+        ws):
+    """
+    attribute-tcp-in as a dictionary.
+    :param ps: NSIP
+    :param rs: NSIP
+    :param mss: TCP MSS
+    :param sack: SACK
+    :param ws: WS
+    :return:
+    Fetches attribute-tcp-in as a dictionary from NSIP
+    """
+    a = attribute_tcp_in()
+    a.set_attribute(ps, rs, mss, sack, ws)
+    return a
+
+
+def get_attribute_tcp_in(
+        ps=None, rs=None, mss=None, sack=None, ws=None):
+    """
+    attribute-tcp-in as a dictionary.
+    :param ps: NSIP
+    :param rs: NSIP
+    :param mss: TCP MSS
+    :param sack: SACK
+    :param ws: WS
+    :return:
+    Fetches attribute-tcp-in as a dictionary from NSIP
+    """
+    a = attribute_tcp_in()
+    return a.get(ps, rs, mss, sack, ws)
+
+
+def add_attribute_tcp_out(
+        nsip, ipaddress, netmask,
+        interval, tcp_mss,
+        tcp_sack_permitted,
+        tcp_ws):
+    """
+    attribute-tcp-out as a dictionary.
+    :param nsip: NSIP address
+    :param ipaddress: IP address
+    :param netmask: Netmask
+    :param mss: TCP MSS
+    :param tcp_ws: TCP WRG
+    :return:
+    Fetches attribute-tcp-out as a dictionary from NSIP
+    """
+    a = attribute_tcp_out()
+    a.set_attribute(nsip, ipaddress, netmask,
+                    interval, tcp_mss, tcp_sack_permitted,
+                    tcp_ws)
+    return a
+
+
+def add_aspath(
+        name, retry_interval,
+        owner, td, sequence,
+        async_delay, max_event_queue, retries, update_delay,
+        add_quota, delete_quota,
+        observation_domain_id=None, originator_prior,
+        overload_bit=None, aspt_drop_mask=None):
+    """
+    aspath as a dictionary.
+    :param name: AS-Path Profile Name
+    :param retry_interval: Retry interval
+    :param owner: Tenant
+    :param td: Traffic Domain
+    :param sequence: Sequencing
+    :param async_delay: Async Delay
+    :param max_event_queue: Max Event Queue
+    :param retries: Retries
+    :param update_delay: Update delay
+    :param add_quota: Add Quota
+    :param delete_quota: Delete Quota
+    :param observation_domain_id: Observation Domain ID
+    :param originator_prior: Originator Priority
+    :param overload_bit: Set Overload bit
+    :param aspt_drop_mask: aspt_drop_mask
+    :return:
+    Fetches AS-PATH Profile as a dictionary from NSIP.
+    """
+    asp_args = aspath()
+    asp_args.set_name(name)
+    asp_args.set_retry_interval(retry_interval)
+    asp_args.set_owner(owner)
+    asp_args.set_traffic_domain(td)
+    asp_args.set_sequence(sequence)
+    asp_args.set_async_delay(async_delay)
+    asp_args.set_max_event_queue(max_event_queue)
+    asp_args.set_retries(retries)
+    asp_args.set_update_delay(update_delay)
+    asp_args.set_add_quota(add_quota)
+    asp_args.set_delete_quota(delete_quota)
+    asp_args.set_observation_domain_id(observation_domain_id)
+    asp_args.set_originator_prior(originator_prior)
+    asp_args.set_overload_bit(overload_bit)
+    asp_args.set_aspt_drop_mask(aspt_drop_mask)
+    return asp
+
+def get_aspath(name):
+    """
+
+    :param name: name
+    :return:
+    AS-PATH Profile as a dictionary.
+    """
+    as_arg = aspath()
+    as_arg.set_name(name)
+    return as_arg.get_args()
+
+
+def add_policer(
+        name, cir, cbs, eir, ebs,
+        address_type, version,
+        ipaddress, rate_burst=1024, rate_pps=9000,
+        log=True, log_interval=1):
+    """
+    policer resource as a dictionary.
+
+    :param name: Name for the Policer
+    :param cir: cir
+    :param cbs: cbs
+    :param eir: eir
+    :param ebs: ebs
+    :param rate_burst: Rate Burst
+    :param rate_pps: Rate PPS
+    :param log: Use LOG
+    :param log_interval: LOG Interval
+    :return:
+    Fetches policer as a dictionary.
+    """
+    pol_obj = policer()
+    pol_obj.set_name(name)
+    pol_obj.set_cir(cir)
+    pol_obj.set_cbs(cbs)
+    pol_obj.set_eir(eir)
+    pol_obj.set_ebs(ebs)
+    pol_obj.set_address_type(address_type)
+    pol_obj.set_version(version)
+    pol_obj.set_ip_address(ipaddress)
+    pol_obj.set_rate_burst(rate_burst)
+    pol_obj.set_rate_pps(rate_pps)
+    pol_obj.set_log(log)
+    pol_obj.set_log_interval(log_interval)
+    return configure_filter(pol_obj, nitro)
+
+
+def _create_nat_rules(nitro, nat_rules_obj):
+    print "Creating NAT Rules... "
+
+    retry = -1
+    rule = None
+
+    while True:
+        retry += 1
+        try:
+            rule = nitro.add(nat_rules_obj)
+            print "Created Rule " + rule.get_name()
+
+            break
+        except NetScalerNitroException as e:
+            if retry >= 10:
+                print "Operation could not be completed : " + str(e)
+                break
+
+            if nodetype[str(type(e))]:
+                print "Retyring for rule " + nat_rules_obj.__options.name
+            else:
+                raise e
+
+
+def _delete_nat_rules(nitro, nat_rules_obj):
+    print "Deleting NAT Rules... "
+
+    retry = -1
+    rule = None
+
+    while True:
+        retry += 1
+        try:
+            rule = nitro.delete(nat_rules_obj)
+            print "Deleted Rule " + rule.get_name()
+
+            break
+        except NetScalerNitroException as e:
+            if retry >= 10:
+                print "Operation could not be completed : " + str(e)
+            break
+
+
