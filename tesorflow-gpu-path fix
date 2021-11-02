@@ -1,0 +1,115 @@
+"""
+create invoyerment for conda with tensorflow gpu 
+fix path and code
+create the necessary files
+"""
+
+
+import os
+import sys
+import subprocess
+from pathlib import Path
+from typing import List, Union, Tuple, Dict
+
+# from subprocess import Popen
+
+
+def check_path() -> None:
+    """
+    Check the path to make sure it is the correct one for conda
+    """
+    path = os.getcwd()
+    if path != "/home/jupyter/tacc-work/Jan/proteinsolver/":
+        print("Please change directory to /home/jupyter/tacc-work/Jan/proteinsolver/")
+        sys.exit(1)
+
+
+def create_env(name: str) -> None:
+    """
+    Create a conda environment with name name
+    """
+    subprocess.run(
+        f"conda create -y -n {name} python=3.7 numpy=1.17.2 scipy=1.3.1 pandas=1.0.3 matplotlib=3.1.1 networkx=2.4 dask=2.6.0 distributed=2.6.0 scikit-learn=0.21.3 tensorflow-gpu=2.0.0 tensorboard=2.0.0",
+        shell=True,
+    )
+
+
+def install_packages() -> None:
+    """
+    Install the necessary packages in the conda environment
+    """
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorflow-probability", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge biopython", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorflow", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorboardx", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch-lightning", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge dask-ml", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge biopython", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge opencv", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge scikit-image", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch-lightning", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorflow-datasets", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge scikit-learn", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch-lightning", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorflow-probability", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge biopython", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorboardx", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch-lightning", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge dask-ml", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge biopython", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge opencv", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge scikit-image", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch-lightning", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorflow-datasets", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge scikit-learn", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch-lightning", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorflow-probability", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge biopython", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge tensorboardx", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch-lightning", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge dask-ml", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge biopython", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge opencv", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge scikit-image", shell=True)
+    subprocess.run("conda install -y -n proteinsolver -c conda-forge pytorch-lightning", shell=True)
+
+
+def create_config() -> None:
+    """
+    Create the config file
+    """
+    subprocess.run("conda run -n proteinsolver python /home/jupyter/tacc-work/Jan/proteinsolver/proteinsolver/scripts/make_config.py", shell=True)
+
+
+def copy_files() -> None:
+    """
+    Copy the necessary files to the conda environment
+    """
+    subprocess.run("cp -r /home/jupyter/tacc-work/Jan/proteinsolver/proteinsolver/* /home/jupyter/tacc-work/Jan/proteinsolver/conda/envs/proteinsolver/", shell=True)
+    subprocess.run("cp -r /home/jupyter/tacc-work/Jan/proteinsolver/proteinsolver/.* /home/jupyter/tacc-work/Jan/proteinsolver/conda/envs/proteinsolver/", shell=True)
+
+
+def create_launcher() -> None:
+    """
+    Create the launcher file
+    """
+    subprocess.run("cp /home/jupyter/tacc-work/Jan/proteinsolver/proteinsolver/scripts/launcher /home/jupyter/tacc-work/Jan/proteinsolver/conda/", shell=True)
+
+
+def main() -> None:
+    """
+    main function
+    """
+    check_path()
+    create_env("proteinsolver")
+    install_packages()
+    create_config()
+    copy_files()
+    create_launcher()
+
+
+if __name__ == "__main__":
+    main()
